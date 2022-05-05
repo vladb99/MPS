@@ -5,10 +5,10 @@
  *      Author: Admin
  */
 
-#include "..\base.h"
+#include "../base.h"
 
-// Ein Ereignis (Event) ist eine Änderung einer (physikalischen) Größe,
-// die für das System relevant ist und auf die das System reagieren sollte.
+// Ein Ereignis (Event) ist eine ï¿½nderung einer (physikalischen) Grï¿½ï¿½e,
+// die fï¿½r das System relevant ist und auf die das System reagieren sollte.
 
 #ifndef EVENT_H_
 #define EVENT_H_

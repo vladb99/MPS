@@ -1,5 +1,5 @@
 #include <msp430.h> 
-#include "..\base.h"
+#include "../base.h"
 #include "TA0.h"
 #include "event.h"
 #include "AS1108.h"
@@ -39,7 +39,7 @@ GLOBAL Void main(Void) {
       }
 
       // wenn die drei Handler korrekt implementiert sind,
-      // kann man ihre Reihnefolge hier beliebig ändern
+      // kann man ihre Reihnefolge hier beliebig ï¿½ndern
       Button_Handler();
       Number_Handler();
       AS1108_Handler();

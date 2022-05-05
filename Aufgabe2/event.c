@@ -6,7 +6,7 @@
  */
 
 #include <msp430.h>
-#include "..\base.h"
+#include "../base.h"
 #include "event.h"
 
 LOCAL volatile TEvent event  = NO_EVENTS;

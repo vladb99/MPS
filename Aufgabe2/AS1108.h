@@ -5,7 +5,7 @@
  *      Author: Admin
  */
 
-#include "..\base.h"
+#include "../base.h"
 
 #ifndef AS1108_H_
 #define AS1108_H_

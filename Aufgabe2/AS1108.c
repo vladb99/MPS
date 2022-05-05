@@ -7,15 +7,15 @@
 
 
 #include <msp430.h>
-#include "..\base.h"
+#include "../base.h"
 #include "event.h"
 #include "AS1108.h"
 
 // Basis des Zahlensystems
-// Einstellung zwischen 2 und 10 soll möglich sein
+// Einstellung zwischen 2 und 10 soll mï¿½glich sein
 #define BASE 10
 
-// es sind geeignete Datenstrukturen für den Datenaustausch
+// es sind geeignete Datenstrukturen fï¿½r den Datenaustausch
 // zwischen den Handlern festzulegen.
 
 LOCAL Void AS1108_Write(UChar adr, UChar arg) {
@@ -46,7 +46,7 @@ GLOBAL Void SPI_Init(Void) {
    // set up Universal Serial Communication Interface A
    SETBIT(UCA1CTLW0, UCSWRST);        // UCA1 software reset
 
-   // in Übereinstimung mit dem SPI-Timing-Diagramm von AS1108
+   // in ï¿½bereinstimung mit dem SPI-Timing-Diagramm von AS1108
    UCA1CTLW0_H = 0b10101001;          // clock phase: rising edge, ...
                                       // ... clock polarity: inactive low ...
                                       // ... MSB first, 8-bit data, SPI master mode, ...
@@ -60,7 +60,7 @@ GLOBAL Void SPI_Init(Void) {
 }
 
 
-// der Treiberbaustein AS1108 ist hier über sie SPI-Schnittstelle zu initialisieren
+// der Treiberbaustein AS1108 ist hier ï¿½ber sie SPI-Schnittstelle zu initialisieren
 GLOBAL Void AS1108_Init(Void) {
 
 }
