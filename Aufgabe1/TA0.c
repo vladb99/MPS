@@ -41,13 +41,23 @@ LOCAL const TButton btn[BTNMAX] = {
 };
 
 // 10ms Schritte
-static const Char MUSTER_1[] = {8, 2, 0};
-static const Char MUSTER_2[] = {3, 3, 0};
-static const Char MUSTER_3[] = {1, 1, 0};
-static const Char MUSTER_4[] = {2, 8, 0};
-static const Char MUSTER_5[] = {2, 2, 2, 8, 0};
-static const Char MUSTER_6[] = {2, 2, 2, 2, 2, 8, 0};
-static const Char* P[] = {MUSTER_1, MUSTER_2, MUSTER_3, MUSTER_4, MUSTER_5, MUSTER_6};
+LOCAL const UChar blink_musters[] = {
+        8, 2, 0,
+        3, 3, 0,
+        1, 1, 0,
+        2, 8, 0,
+        2, 2, 2, 8, 0,
+        2, 2, 2, 2, 2, 8, 0
+};
+
+LOCAL const UChar * const map[] = {
+    &blink_musters[0],
+    &blink_musters[3],
+    &blink_musters[6],
+    &blink_musters[9],
+    &blink_musters[12],
+    &blink_musters[17]
+};
 
 static UChar step_count;
 static UChar array_index;
@@ -104,12 +114,12 @@ GLOBAL Void TA0_Init(Void) {
 
 #pragma vector = TIMER0_A0_VECTOR
 __interrupt Void TA0_ISR(Void) {
-    static volatile UChar test = 0;
+    //static volatile UChar test = 0;
     // Timer logic for 250ms step
     if (--step_count EQ 0) {
         //test = *(*(P + pattern_index) + array_index);
         step_count = TIMER_COUNT;
-        current_pattern_value = *(*(P + pattern_index) + array_index);
+        current_pattern_value = *(*(map + pattern_index) + array_index);
         cnt_led++;
 
         // LED2 Flash logic
@@ -117,7 +127,7 @@ __interrupt Void TA0_ISR(Void) {
             TGLBIT(P1OUT, BIT2);
             array_index++;
             cnt_led = 0;
-            if (*(*(P + pattern_index) + array_index) EQ 0) {
+            if (*(*(map + pattern_index) + array_index) EQ 0) {
                 array_index = 0;
                 pattern_index = pattern_index_new;
             }
