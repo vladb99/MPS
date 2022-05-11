@@ -12,7 +12,9 @@
 #include "GPIO.h"
 
 #define CNTMAX 4
-#define TIMER_COUNT 25
+// 1/800Hz * 1000 = 1.25ms
+// 250ms / 1.25ms = 200
+#define TIMER_COUNT 200
 #define BTNMAX 2
 
 /*
@@ -91,7 +93,8 @@ GLOBAL Void TA0_Init(Void) {
     CLRBIT(TA0CCR0, CCIFG);                   // clear CCI flag
     TA0CTL  = TASSEL__ACLK + MC__UP + ID__8;  // set up Timer A
     TA0EX0  = TAIDEX_7;                       // set up expansion register
-    TA0CCR0 = 2*48;                           // set up CCR0 for 10 ms
+    // 9600 / 800Hz = 12
+    TA0CCR0 = 12;                           // set up CCR0 for 10 ms
     SETBIT(TA0CTL, TACLR);                    // clear and start Timer
     SETBIT(TA0CCTL0, CCIE);                   // enable Timer A interrupt
 
