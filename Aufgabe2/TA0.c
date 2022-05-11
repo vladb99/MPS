@@ -12,7 +12,9 @@
 #include "GPIO.h"
 
 #define CNTMAX 4
-#define TIMER_COUNT 25
+// 1/800Hz * 1000 = 1.25ms
+// 250ms / 1.25ms = 200
+#define TIMER_COUNT 200
 #define BTNMAX 2
 
 /*
@@ -39,13 +41,29 @@ LOCAL const TButton btn[BTNMAX] = {
 };
 
 // 10ms Schritte
-static const Char MUSTER_1[] = {8, 2, 0};
-static const Char MUSTER_2[] = {3, 3, 0};
-static const Char MUSTER_3[] = {1, 1, 0};
-static const Char MUSTER_4[] = {2, 8, 0};
-static const Char MUSTER_5[] = {2, 2, 2, 8, 0};
-static const Char MUSTER_6[] = {2, 2, 2, 2, 2, 8, 0};
-static const Char* P[] = {MUSTER_1, MUSTER_2, MUSTER_3, MUSTER_4, MUSTER_5, MUSTER_6};
+LOCAL const UChar blink_musters[] = {
+        8, 2, 0,
+        3, 3, 0,
+        1, 1, 0,
+        2, 8, 0,
+        2, 2, 2, 8, 0,
+        2, 2, 2, 2, 2, 8, 0
+};
+
+LOCAL const UChar * const map[] = {
+    &blink_musters[0],
+    &blink_musters[3],
+    &blink_musters[6],
+    &blink_musters[9],
+    &blink_musters[12],
+    &blink_musters[17]
+};
+
+LOCAL struct {
+    UChar tick;
+    const UChar *act;
+    const UChar *new;
+} muster;
 
 static UChar step_count;
 static UChar array_index;
@@ -61,11 +79,16 @@ GLOBAL Void set_blink_muster(UInt arg) {
  * Diese L�sung h�ngt stark von der gew�hlten
  * Datenstruktur ab.
  */
-    pattern_index_new = arg;
+    //pattern_index_new = arg;
+    muster.new = map[arg];
 }
 
 // Der Timer A0 ist bereits initialisiert
 GLOBAL Void TA0_Init(Void) {
+    muster.tick = 1;
+    muster.act = map[MUSTER1];
+    muster.new = map[MUSTER1];
+
     button.idx = 0;
     button.ptr = &btn[0];
 
@@ -86,7 +109,8 @@ GLOBAL Void TA0_Init(Void) {
     CLRBIT(TA0CCR0, CCIFG);                   // clear CCI flag
     TA0CTL  = TASSEL__ACLK + MC__UP + ID__8;  // set up Timer A
     TA0EX0  = TAIDEX_7;                       // set up expansion register
-    TA0CCR0 = 2*48;                           // set up CCR0 for 10 ms
+    // 9600 / 800Hz = 12
+    TA0CCR0 = 12;                             // set up CCR0 for 10 ms
     SETBIT(TA0CTL, TACLR);                    // clear and start Timer
     SETBIT(TA0CCTL0, CCIE);                   // enable Timer A interrupt
 
@@ -96,12 +120,28 @@ GLOBAL Void TA0_Init(Void) {
 
 #pragma vector = TIMER0_A0_VECTOR
 __interrupt Void TA0_ISR(Void) {
-    // static volatile UChar test = 0;
+    static volatile UChar test = 0;
+    static volatile UChar test2 = 0;
     // Timer logic for 250ms step
     if (--step_count EQ 0) {
-        //test = *(*(P + pattern_index) + array_index);
+//        if (--muster.tick EQ 0) {
+//            if (*muster.act EQ 0) {
+//                muster.act = muster.new;
+//            }
+//            muster.tick = *muster.act++;
+//            test = muster.tick;
+//            test2 = 2;
+//            TGLBIT(P1OUT, BIT2);
+//            if (TSTBIT(muster.tick, ON)) {
+//                CLRBIT(muster.tick, ON);
+//                SETBIT(P1OUT, BIT2);
+//            } else {
+//                CLRBIT(P1OUT, BIT2);
+//            }
+//        }
+
         step_count = TIMER_COUNT;
-        current_pattern_value = *(*(P + pattern_index) + array_index);
+        current_pattern_value = *(*(map + pattern_index) + array_index);
         cnt_led++;
 
         // LED2 Flash logic
@@ -109,7 +149,7 @@ __interrupt Void TA0_ISR(Void) {
             TGLBIT(P1OUT, BIT2);
             array_index++;
             cnt_led = 0;
-            if (*(*(P + pattern_index) + array_index) EQ 0) {
+            if (*(*(map + pattern_index) + array_index) EQ 0) {
                 array_index = 0;
                 pattern_index = pattern_index_new;
             }
