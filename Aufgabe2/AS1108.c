@@ -60,9 +60,23 @@ GLOBAL Void SPI_Init(Void) {
 }
 
 
-// der Treiberbaustein AS1108 ist hier �ber sie SPI-Schnittstelle zu initialisieren
+// der Treiberbaustein AS1108 ist hier �ber die SPI-Schnittstelle zu initialisieren
 GLOBAL Void AS1108_Init(Void) {
-
+    // Feature
+    AS1108_Write(0x0E, 0b10011111);
+    // Display test on normal operation
+    AS1108_Write(0x0F, 0b00000000);
+    // Intensity on max
+    AS1108_Write(0x0A, 0x0F);
+    // Scan limit on display all digits
+    AS1108_Write(0x0B, 0x03);
+    // Decode mode on Code-B for all digits
+    AS1108_Write(0x09, 0xFF);
+    // Show Zero on digit 0
+    AS1108_Write(0x01, 0x0);
+    AS1108_Write(0x02, 0b00000100);
+    AS1108_Write(0x03, 0b00000011);
+    AS1108_Write(0x04, 0b00001110);
 }
 
 // ----------------------------------------------------------------------------

@@ -14,8 +14,8 @@
 #define CNTMAX 4
 // 1/800Hz * 1000 = 1.25ms
 // 250ms / 1.25ms = 200
+#define BTNMAX 6
 #define TIMER_COUNT 200
-#define BTNMAX 2
 
 /*
  * Man soll sich eine geeignete Datenstruktur �berlegen,
@@ -36,8 +36,12 @@ LOCAL struct {
 } button;
 
 LOCAL const TButton btn[BTNMAX] = {
-    {(UChar *)(&P1IN), BIT1, EVENT_BTN1, &button.cnt[0]},
-    {(UChar *)(&P1IN), BIT0, EVENT_BTN2, &button.cnt[1]}
+    {(UChar *)(&P1IN), BIT0, EVENT_BTN1, &button.cnt[0]},
+    {(UChar *)(&P1IN), BIT1, EVENT_BTN2, &button.cnt[1]},
+    {(UChar *)(&P3IN), BIT0, EVENT_BTN2, &button.cnt[2]},
+    {(UChar *)(&P3IN), BIT1, EVENT_BTN2, &button.cnt[3]},
+    {(UChar *)(&P3IN), BIT2, EVENT_BTN2, &button.cnt[4]},
+    {(UChar *)(&P3IN), BIT3, EVENT_BTN2, &button.cnt[5]}
 };
 
 // 10ms Schritte
@@ -59,18 +63,13 @@ LOCAL const UChar * const map[] = {
     &blink_musters[17]
 };
 
-LOCAL struct {
-    UChar tick;
-    const UChar *act;
-    const UChar *new;
-} muster;
-
 static UChar step_count;
 static UChar array_index;
 static UChar cnt_led;
 static UChar pattern_index;
 static UChar current_pattern_value;
 static UChar pattern_index_new;
+//static const struct Button btn1 = {P1IN, BIT1, EVENT_BTN1};
 
 GLOBAL Void set_blink_muster(UInt arg) {
 /*
@@ -79,16 +78,11 @@ GLOBAL Void set_blink_muster(UInt arg) {
  * Diese L�sung h�ngt stark von der gew�hlten
  * Datenstruktur ab.
  */
-    //pattern_index_new = arg;
-    muster.new = map[arg];
+    pattern_index_new = arg;
 }
 
 // Der Timer A0 ist bereits initialisiert
 GLOBAL Void TA0_Init(Void) {
-    muster.tick = 1;
-    muster.act = map[MUSTER1];
-    muster.new = map[MUSTER1];
-
     button.idx = 0;
     button.ptr = &btn[0];
 
@@ -103,6 +97,10 @@ GLOBAL Void TA0_Init(Void) {
     current_pattern_value = 0;
     pattern_index_new = 0;
 
+    //int *cheat_x = btn1->portid;
+    //*cheat_x = P1IN;
+    //btn1.portid = P1IN;
+
     // Folie 27
     TA0CCR0 = 0;                              // stopp Timer A
     CLRBIT(TA0CTL, TAIFG);                    // clear overflow flag
@@ -110,7 +108,7 @@ GLOBAL Void TA0_Init(Void) {
     TA0CTL  = TASSEL__ACLK + MC__UP + ID__8;  // set up Timer A
     TA0EX0  = TAIDEX_7;                       // set up expansion register
     // 9600 / 800Hz = 12
-    TA0CCR0 = 12;                             // set up CCR0 for 10 ms
+    TA0CCR0 = 12;                           // set up CCR0 for 10 ms
     SETBIT(TA0CTL, TACLR);                    // clear and start Timer
     SETBIT(TA0CCTL0, CCIE);                   // enable Timer A interrupt
 
@@ -120,26 +118,10 @@ GLOBAL Void TA0_Init(Void) {
 
 #pragma vector = TIMER0_A0_VECTOR
 __interrupt Void TA0_ISR(Void) {
-    static volatile UChar test = 0;
-    static volatile UChar test2 = 0;
+    //static volatile UChar test = 0;
     // Timer logic for 250ms step
     if (--step_count EQ 0) {
-//        if (--muster.tick EQ 0) {
-//            if (*muster.act EQ 0) {
-//                muster.act = muster.new;
-//            }
-//            muster.tick = *muster.act++;
-//            test = muster.tick;
-//            test2 = 2;
-//            TGLBIT(P1OUT, BIT2);
-//            if (TSTBIT(muster.tick, ON)) {
-//                CLRBIT(muster.tick, ON);
-//                SETBIT(P1OUT, BIT2);
-//            } else {
-//                CLRBIT(P1OUT, BIT2);
-//            }
-//        }
-
+        //test = *(*(P + pattern_index) + array_index);
         step_count = TIMER_COUNT;
         current_pattern_value = *(*(map + pattern_index) + array_index);
         cnt_led++;
