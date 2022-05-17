@@ -77,10 +77,13 @@ GLOBAL Void AS1108_Init(Void) {
     // AS1108_Write(0x0F, 0);
 
     // Init with 0
-    AS1108_Write(0x01, 0);
-    AS1108_Write(0x02, 0);
-    AS1108_Write(0x03, 0);
-    AS1108_Write(0x04, 0);
+    //AS1108_Write(0x01, 0);
+    //AS1108_Write(0x02, 0);
+    //AS1108_Write(0x03, 0);
+    //AS1108_Write(0x04, 0);
+
+    set_event(EVENT_8);
+    __low_power_mode_off_on_exit();
 }
 
 // ----------------------------------------------------------------------------
@@ -92,34 +95,43 @@ GLOBAL Void Button_Handler(Void) {
         clr_event(EVENT_3);
         steps_size = 1;
         set_event(EVENT_7);
+        __low_power_mode_off_on_exit();
     } else if (tst_event(EVENT_4)) {
         clr_event(EVENT_4);
         steps_size = 10;
         set_event(EVENT_7);
+        __low_power_mode_off_on_exit();
     } else if (tst_event(EVENT_5)) {
         clr_event(EVENT_5);
         steps_size = 100;
         set_event(EVENT_7);
+        __low_power_mode_off_on_exit();
     } else if (tst_event(EVENT_6)) {
         clr_event(EVENT_6);
         steps_size = 1000;
         set_event(EVENT_7);
+        __low_power_mode_off_on_exit();
     }
+
 }
 
 // ----------------------------------------------------------------------------
-GLOBAL Int value = 10000;
+GLOBAL Int value = 0;
 
 // der Number-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Number_Handler(Void) {
     if (tst_event(EVENT_7)) {
        clr_event(EVENT_7);
        if (TSTBIT(P2OUT, BIT7)) {
+           if (value LT step_size) {
+               value += 10000;
+           }
            value -= steps_size;
        } else {
            value += steps_size;
        }
        set_event(EVENT_8);
+       __low_power_mode_off_on_exit();
    }
 }
 
@@ -127,8 +139,42 @@ GLOBAL Void Number_Handler(Void) {
 
 // der AS1108_Hander beinhaltet eine Zustandsmaschine
 GLOBAL Void AS1108_Handler(Void) {
-    if (tst_event(EVENT_7)) {
-        clr_event(EVENT_7);
+    if (tst_event(EVENT_8)) {
+        clr_event(EVENT_8);
+
+        Int tmp = value;
+        if (tmp GE 10000) {
+            tmp -= 10000;
+        }
+
+        for (int i = 1; i < 5; i++) {
+            // Better if these Ints are outside?
+            Int to_check = 0;
+            Int digit = 0;
+            if (i EQ 1) {
+                to_check = 1000;
+            } else if (i EQ 2) {
+                to_check = 100;
+            } else if (i EQ 3) {
+                to_check = 10;
+            } else if (i EQ 4) {
+                to_check = 1;
+            }
+
+            if (tmp EQ to_check) {
+                digit = 1;
+            } else if (tmp GT to_check) {
+                for (int j = 0; j < 10; j++) {
+                    if (tmp GE steps_size) {
+                        digit++;
+                        tmop -= steps_size;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            AS1108_Write(i, digit);
+        }
 //           10823
 //           10000
 //
