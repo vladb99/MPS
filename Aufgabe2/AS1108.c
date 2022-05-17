@@ -62,41 +62,79 @@ GLOBAL Void SPI_Init(Void) {
 
 // der Treiberbaustein AS1108 ist hier �ber die SPI-Schnittstelle zu initialisieren
 GLOBAL Void AS1108_Init(Void) {
-    // Feature
-    AS1108_Write(0x0E, 0b10011111);
-    // Display test on normal operation
-    AS1108_Write(0x0F, 0b00000000);
-    // Intensity on max
-    AS1108_Write(0x0A, 0x0F);
-    // Scan limit on display all digits
-    AS1108_Write(0x0B, 0x03);
+    // Shutdown
+    AS1108_Write(0x0C, 0x81);
     // Decode mode on Code-B for all digits
     AS1108_Write(0x09, 0xFF);
-    // Show Zero on digit 0
-    AS1108_Write(0x01, 0x0);
-    AS1108_Write(0x02, 0b00000100);
-    AS1108_Write(0x03, 0b00000011);
-    AS1108_Write(0x04, 0b00001110);
+    // Intensity on max
+    AS1108_Write(0x0A, 0x06);
+    // Scan limit on display all digits
+    AS1108_Write(0x0B, 0x03);
+
+    // Feature
+    // AS1108_Write(0x0E, 0b00000000);
+    // Display test on normal operation
+    // AS1108_Write(0x0F, 0);
+
+    // Init with 0
+    AS1108_Write(0x01, 0);
+    AS1108_Write(0x02, 0);
+    AS1108_Write(0x03, 0);
+    AS1108_Write(0x04, 0);
 }
 
 // ----------------------------------------------------------------------------
+GLOBAL UInt steps_size = 0;
 
 // der Button-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Button_Handler(Void) {
-
+    if (tst_event(EVENT_3)) {
+        clr_event(EVENT_3);
+        steps_size = 1;
+        set_event(EVENT_7);
+    } else if (tst_event(EVENT_4)) {
+        clr_event(EVENT_4);
+        steps_size = 10;
+        set_event(EVENT_7);
+    } else if (tst_event(EVENT_5)) {
+        clr_event(EVENT_5);
+        steps_size = 100;
+        set_event(EVENT_7);
+    } else if (tst_event(EVENT_6)) {
+        clr_event(EVENT_6);
+        steps_size = 1000;
+        set_event(EVENT_7);
+    }
 }
 
 // ----------------------------------------------------------------------------
+GLOBAL Int value = 10000;
 
 // der Number-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Number_Handler(Void) {
-
+    if (tst_event(EVENT_7)) {
+       clr_event(EVENT_7);
+       if (TSTBIT(P2OUT, BIT7)) {
+           value -= steps_size;
+       } else {
+           value += steps_size;
+       }
+       set_event(EVENT_8);
+   }
 }
 
 // ----------------------------------------------------------------------------
 
 // der AS1108_Hander beinhaltet eine Zustandsmaschine
 GLOBAL Void AS1108_Handler(Void) {
-
+    if (tst_event(EVENT_7)) {
+        clr_event(EVENT_7);
+//           10823
+//           10000
+//
+//           823 < 1000 -> 0
+//
+//           823 > 100
+   }
 }
 
