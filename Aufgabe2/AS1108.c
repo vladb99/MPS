@@ -115,7 +115,13 @@ GLOBAL Void Button_Handler(Void) {
 }
 
 // ----------------------------------------------------------------------------
+typedef enum {S0, S1, S2} TState;
 GLOBAL Int value = 0;
+Int tmp = 0;
+Int to_check = 0;
+UInt i = 4;
+LOCAL TState state = S0;
+UInt digit = 0;
 
 // der Number-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Number_Handler(Void) {
@@ -132,6 +138,7 @@ GLOBAL Void Number_Handler(Void) {
                value -= MAX_VALUE;
            }
        }
+       tmp = value;
        set_event(EVENT_DIGI);
    }
 }
@@ -139,81 +146,56 @@ GLOBAL Void Number_Handler(Void) {
 // ----------------------------------------------------------------------------
 
 // der AS1108_Hander beinhaltet eine Zustandsmaschine
-typedef enum {S0, S1, S2} TState;
 GLOBAL Void AS1108_Handler(Void) {
-    if (tst_event(EVENT_DIGI)) {
-        clr_event(EVENT_DIGI);
-
-        Int tmp = value;
-        Int to_check = 0;
-        UInt i = 4;
-        LOCAL TState state = S0;
-        UInt digit = 0;
-
-        if (tmp GE MAX_VALUE) {
-            tmp -= MAX_VALUE;
-        }
-
-        while (1) {
-            switch(state) {
-            case S0:
+    switch(state) {
+        case S0:
+            if (tst_event(EVENT_DIGI)) {
                 i = 4;
                 state = S1;
-                break;
-            case S1:
-                if (i > 0) {
-                    state = S2;
-
-                    digit = 0;
-                    if (i EQ 4) {
-                        to_check = STEP1;
-                    } else if (i EQ 3) {
-                        to_check = STEP2;
-                    } else if (i EQ 2) {
-                        to_check = STEP3;
-                    } else if (i EQ 1) {
-                        to_check = STEP4;
-                    }
-
-                    if (tmp EQ to_check) {
-                        digit = 1;
-                        tmp -= to_check;
-                    }
-                } else {
-                    state = S0;
-                    return;
-                }
-                break;
-            case S2:
-                if (tmp GE to_check) {
-                    tmp -= to_check;
-                    digit++;
-                } else {
-                    AS1108_Write(i, digit);
-                    i--;
-                    state = S1;
-                }
-                break;
-            default:
-                break;
             }
-        }
+            break;
+        case S1:
+            if (i > 0) {
+                digit = 0;
+                if (i EQ 4) {
+                    to_check = STEP1;
+                } else if (i EQ 3) {
+                    to_check = STEP2;
+                } else if (i EQ 2) {
+                    to_check = STEP3;
+                } else if (i EQ 1) {
+                    to_check = STEP4;
+                }
 
-
-
-
-        //for (int i = 4; i > 0; i--) {
-//        while (i > 0)
-//        {
-//
-//
-//            while (tmp GE to_check) {
-//
-//            }
-//
-//            AS1108_Write(i, digit);
-//            i--;
-//        }
-   }
+                if (tmp EQ to_check) {
+                    digit = 1;
+                    tmp -= to_check;
+                }
+                state = S2;
+            } else {
+                clr_event(EVENT_DIGI);
+                tmp = value;
+                to_check = 0;
+                i = 4;
+                digit = 0;
+                if (tmp GE MAX_VALUE) {
+                    tmp -= MAX_VALUE;
+                }
+                state = S0;
+            }
+            break;
+        case S2:
+            if (tmp GE to_check) {
+                tmp -= to_check;
+                digit++;
+            } else {
+                AS1108_Write(i, digit);
+                i--;
+                state = S1;
+            }
+            break;
+        default:
+            break;
+    }
 }
 
