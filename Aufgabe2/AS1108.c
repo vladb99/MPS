@@ -14,6 +14,11 @@
 // Basis des Zahlensystems
 // Einstellung zwischen 2 und 10 soll m�glich sein
 #define BASE 10
+#define MAX_VALUE 10000
+#define STEP1 1000
+#define STEP2 100
+#define STEP3 10
+#define STEP4 1
 
 // es sind geeignete Datenstrukturen f�r den Datenaustausch
 // zwischen den Handlern festzulegen.
@@ -82,8 +87,7 @@ GLOBAL Void AS1108_Init(Void) {
     //AS1108_Write(0x03, 0);
     //AS1108_Write(0x04, 0);
 
-    set_event(EVENT_8);
-    __low_power_mode_off_on_exit();
+    set_event(EVENT_DIGI);
 }
 
 // ----------------------------------------------------------------------------
@@ -91,28 +95,23 @@ GLOBAL UInt steps_size = 0;
 
 // der Button-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Button_Handler(Void) {
-    if (tst_event(EVENT_3)) {
-        clr_event(EVENT_3);
-        steps_size = 1;
-        set_event(EVENT_7);
-        __low_power_mode_off_on_exit();
-    } else if (tst_event(EVENT_4)) {
-        clr_event(EVENT_4);
-        steps_size = 10;
-        set_event(EVENT_7);
-        __low_power_mode_off_on_exit();
-    } else if (tst_event(EVENT_5)) {
-        clr_event(EVENT_5);
-        steps_size = 100;
-        set_event(EVENT_7);
-        __low_power_mode_off_on_exit();
-    } else if (tst_event(EVENT_6)) {
-        clr_event(EVENT_6);
-        steps_size = 1000;
-        set_event(EVENT_7);
-        __low_power_mode_off_on_exit();
+    if (tst_event(EVENT_BTN3)) {
+        clr_event(EVENT_BTN3);
+        steps_size = STEP4;
+        set_event(EVENT_15);
+    } else if (tst_event(EVENT_BTN4)) {
+        clr_event(EVENT_BTN4);
+        steps_size = STEP3;
+        set_event(EVENT_15);
+    } else if (tst_event(EVENT_BTN5)) {
+        clr_event(EVENT_BTN5);
+        steps_size = STEP2;
+        set_event(EVENT_15);
+    } else if (tst_event(EVENT_BTN6)) {
+        clr_event(EVENT_BTN6);
+        steps_size = STEP1;
+        set_event(EVENT_15);
     }
-
 }
 
 // ----------------------------------------------------------------------------
@@ -120,18 +119,20 @@ GLOBAL Int value = 0;
 
 // der Number-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Number_Handler(Void) {
-    if (tst_event(EVENT_7)) {
-       clr_event(EVENT_7);
+    if (tst_event(EVENT_15)) {
+       clr_event(EVENT_15);
        if (TSTBIT(P2OUT, BIT7)) {
-           if (value LT step_size) {
-               value += 10000;
+           if (value LT steps_size) {
+               value += MAX_VALUE;
            }
            value -= steps_size;
        } else {
            value += steps_size;
+           if (value GT MAX_VALUE) {
+               value -= MAX_VALUE;
+           }
        }
-       set_event(EVENT_8);
-       __low_power_mode_off_on_exit();
+       set_event(EVENT_DIGI);
    }
 }
 
@@ -139,35 +140,35 @@ GLOBAL Void Number_Handler(Void) {
 
 // der AS1108_Hander beinhaltet eine Zustandsmaschine
 GLOBAL Void AS1108_Handler(Void) {
-    if (tst_event(EVENT_8)) {
-        clr_event(EVENT_8);
+    if (tst_event(EVENT_DIGI)) {
+        clr_event(EVENT_DIGI);
 
         Int tmp = value;
-        if (tmp GE 10000) {
-            tmp -= 10000;
+        Int to_check = 0;
+        if (tmp GE MAX_VALUE) {
+            tmp -= MAX_VALUE;
         }
 
-        for (int i = 1; i < 5; i++) {
-            // Better if these Ints are outside?
-            Int to_check = 0;
+        for (int i = 4; i > 0; i--) {
             Int digit = 0;
-            if (i EQ 1) {
-                to_check = 1000;
-            } else if (i EQ 2) {
-                to_check = 100;
+            if (i EQ 4) {
+                to_check = STEP1;
             } else if (i EQ 3) {
-                to_check = 10;
-            } else if (i EQ 4) {
-                to_check = 1;
+                to_check = STEP2;
+            } else if (i EQ 2) {
+                to_check = STEP3;
+            } else if (i EQ 1) {
+                to_check = STEP4;
             }
 
             if (tmp EQ to_check) {
                 digit = 1;
+                tmp -= to_check;
             } else if (tmp GT to_check) {
                 for (int j = 0; j < 10; j++) {
-                    if (tmp GE steps_size) {
+                    if (tmp GE to_check) {
                         digit++;
-                        tmop -= steps_size;
+                        tmp -= to_check;
                     } else {
                         break;
                     }
@@ -175,12 +176,6 @@ GLOBAL Void AS1108_Handler(Void) {
             }
             AS1108_Write(i, digit);
         }
-//           10823
-//           10000
-//
-//           823 < 1000 -> 0
-//
-//           823 > 100
    }
 }
 
