@@ -19,7 +19,6 @@
 #define STEP2 100
 #define STEP3 10
 #define STEP4 1
-#define TRUNSIZE 3
 
 // es sind geeignete Datenstrukturen f�r den Datenaustausch
 // zwischen den Handlern festzulegen.
@@ -116,12 +115,10 @@ GLOBAL Void Button_Handler(Void) {
 }
 
 // ----------------------------------------------------------------------------
-typedef enum {S0=0, S1, S2} TState;
 GLOBAL Int value = 0;
 Int tmp = 0;
 Int to_check = 0;
 UInt i = 4;
-LOCAL TState state = S0;
 UInt digit = 0;
 
 // der Number-Handler beinhaltet keine Zustandsmaschiene
@@ -145,10 +142,21 @@ GLOBAL Void Number_Handler(Void) {
 }
 
 // ----------------------------------------------------------------------------
+// Datentyp eines konstanten Funktionspointers
+typedef Void (* VoidFunc)(Void);
+
+// Funktionsprototypen
+LOCAL Void State0(Void);
+LOCAL Void State1(Void);
+LOCAL Void State2(Void);
+
+// lokale Zustandsvariable
+LOCAL VoidFunc state = State0;
+
 LOCAL Void State0(Void) {
     if (tst_event(EVENT_DIGI)) {
         i = 4;
-        state = S1;
+        state = State1;
     }
 }
 
@@ -169,7 +177,7 @@ LOCAL Void State1(Void) {
             digit = 1;
             tmp -= to_check;
         }
-        state = S2;
+        state = State2;
     } else {
         clr_event(EVENT_DIGI);
         tmp = value;
@@ -179,7 +187,7 @@ LOCAL Void State1(Void) {
         if (tmp GE MAX_VALUE) {
             tmp -= MAX_VALUE;
         }
-        state = S0;
+        state = State0;
     }
 }
 
@@ -190,19 +198,11 @@ LOCAL Void State2(Void) {
     } else {
         AS1108_Write(i, digit);
         i--;
-        state = S1;
+        state = State1;
     }
 }
 
-// Datentyp eines konstanten Funktionspointers
-typedef Void (* const VoidFunc)(Void);
-
-// Tabelle mit konstanten Funktionspointern
-LOCAL const VoidFunc run[TRUNSIZE] = {State0,State1,State2};
-
 // der AS1108_Hander beinhaltet eine Zustandsmaschine
 GLOBAL Void AS1108_Handler(Void) {
-    if (state LT TRUNSIZE) {
-        run[state]();
-    }
+    (*state)();
 }
