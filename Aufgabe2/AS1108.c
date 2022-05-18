@@ -19,6 +19,7 @@
 #define STEP2 100
 #define STEP3 10
 #define STEP4 1
+#define TRUNSIZE 3
 
 // es sind geeignete Datenstrukturen f�r den Datenaustausch
 // zwischen den Handlern festzulegen.
@@ -115,7 +116,7 @@ GLOBAL Void Button_Handler(Void) {
 }
 
 // ----------------------------------------------------------------------------
-typedef enum {S0, S1, S2} TState;
+typedef enum {S0=0, S1, S2} TState;
 GLOBAL Int value = 0;
 Int tmp = 0;
 Int to_check = 0;
@@ -144,58 +145,64 @@ GLOBAL Void Number_Handler(Void) {
 }
 
 // ----------------------------------------------------------------------------
-
-// der AS1108_Hander beinhaltet eine Zustandsmaschine
-GLOBAL Void AS1108_Handler(Void) {
-    switch(state) {
-        case S0:
-            if (tst_event(EVENT_DIGI)) {
-                i = 4;
-                state = S1;
-            }
-            break;
-        case S1:
-            if (i > 0) {
-                digit = 0;
-                if (i EQ 4) {
-                    to_check = STEP1;
-                } else if (i EQ 3) {
-                    to_check = STEP2;
-                } else if (i EQ 2) {
-                    to_check = STEP3;
-                } else if (i EQ 1) {
-                    to_check = STEP4;
-                }
-
-                if (tmp EQ to_check) {
-                    digit = 1;
-                    tmp -= to_check;
-                }
-                state = S2;
-            } else {
-                clr_event(EVENT_DIGI);
-                tmp = value;
-                to_check = 0;
-                i = 4;
-                digit = 0;
-                if (tmp GE MAX_VALUE) {
-                    tmp -= MAX_VALUE;
-                }
-                state = S0;
-            }
-            break;
-        case S2:
-            if (tmp GE to_check) {
-                tmp -= to_check;
-                digit++;
-            } else {
-                AS1108_Write(i, digit);
-                i--;
-                state = S1;
-            }
-            break;
-        default:
-            break;
+LOCAL Void State0(Void) {
+    if (tst_event(EVENT_DIGI)) {
+        i = 4;
+        state = S1;
     }
 }
 
+LOCAL Void State1(Void) {
+    if (i > 0) {
+        digit = 0;
+        if (i EQ 4) {
+            to_check = STEP1;
+        } else if (i EQ 3) {
+            to_check = STEP2;
+        } else if (i EQ 2) {
+            to_check = STEP3;
+        } else if (i EQ 1) {
+            to_check = STEP4;
+        }
+
+        if (tmp EQ to_check) {
+            digit = 1;
+            tmp -= to_check;
+        }
+        state = S2;
+    } else {
+        clr_event(EVENT_DIGI);
+        tmp = value;
+        to_check = 0;
+        i = 4;
+        digit = 0;
+        if (tmp GE MAX_VALUE) {
+            tmp -= MAX_VALUE;
+        }
+        state = S0;
+    }
+}
+
+LOCAL Void State2(Void) {
+    if (tmp GE to_check) {
+        tmp -= to_check;
+        digit++;
+    } else {
+        AS1108_Write(i, digit);
+        i--;
+        state = S1;
+    }
+}
+
+// Datentyp eines konstanten Funktionspointers
+typedef Void (* const VoidFunc)(Void);
+
+// Tabelle mit konstanten Funktionspointern
+LOCAL const VoidFunc run[TRUNSIZE] = {State0,State1,State2};
+
+// der AS1108_Hander beinhaltet eine Zustandsmaschine
+GLOBAL Void AS1108_Handler(Void) {
+    if (state LT TRUNSIZE) {
+        run[state]();
+    }
+}
