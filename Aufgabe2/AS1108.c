@@ -20,6 +20,8 @@
 #define STEP3 10
 #define STEP4 1
 
+const UInt steps[] = {0, 1, 10, 100, 1000};
+
 // es sind geeignete Datenstrukturen f�r den Datenaustausch
 // zwischen den Handlern festzulegen.
 
@@ -97,7 +99,7 @@ GLOBAL UInt steps_size = 0;
 // der Button-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Button_Handler(Void) {
     // 1532 -> 1404
-    if (tst_event(EVENT_BTN3)) {
+    if (tst_event(EVENT_BTN3) ) {
         clr_event(EVENT_BTN3);
         steps_size = STEP4;
         set_event(EVENT_15);
@@ -166,16 +168,7 @@ LOCAL Void State0(Void) {
 LOCAL Void State1(Void) {
     if (i > 0) {
         digit = 0;
-        if (i EQ 4) {
-            to_check = STEP1;
-        } else if (i EQ 3) {
-            to_check = STEP2;
-        } else if (i EQ 2) {
-            to_check = STEP3;
-        } else if (i EQ 1) {
-            to_check = STEP4;
-        }
-
+        to_check = steps[i];
         if (tmp EQ to_check) {
             digit = 1;
             tmp -= to_check;
