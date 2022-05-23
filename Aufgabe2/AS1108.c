@@ -14,13 +14,10 @@
 // Basis des Zahlensystems
 // Einstellung zwischen 2 und 10 soll m�glich sein
 #define BASE 10
-#define MAX_VALUE 10000
-#define STEP1 1000
-#define STEP2 100
-#define STEP3 10
-#define STEP4 1
 
-const UInt steps[] = {0, 1, 10, 100, 1000};
+// fifth element is a dont care
+Int digits[] = {0, 0, 0, 0, 0};
+static UInt selected;
 
 // es sind geeignete Datenstrukturen f�r den Datenaustausch
 // zwischen den Handlern festzulegen.
@@ -69,7 +66,6 @@ GLOBAL Void SPI_Init(Void) {
 
 // der Treiberbaustein AS1108 ist hier �ber die SPI-Schnittstelle zu initialisieren
 GLOBAL Void AS1108_Init(Void) {
-    // 1532 -> 1480
     // Shutdown
     AS1108_Write(0x0C, 0x81);
     // Decode mode on Code-B for all digits
@@ -90,116 +86,101 @@ GLOBAL Void AS1108_Init(Void) {
     //AS1108_Write(0x03, 0);
     //AS1108_Write(0x04, 0);
 
+    //AS1108_Write(4, 9);
+
     set_event(EVENT_DIGI);
 }
 
 // ----------------------------------------------------------------------------
-GLOBAL UInt steps_size = 0;
-
 // der Button-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Button_Handler(Void) {
-    // 1532 -> 1404
-    if (tst_event(EVENT_BTN3) ) {
+    if (tst_event(EVENT_BTN3)) {
         clr_event(EVENT_BTN3);
-        steps_size = STEP4;
+        selected = 0;
         set_event(EVENT_15);
     } else if (tst_event(EVENT_BTN4)) {
         clr_event(EVENT_BTN4);
-        steps_size = STEP3;
+        selected = 1;
         set_event(EVENT_15);
     } else if (tst_event(EVENT_BTN5)) {
         clr_event(EVENT_BTN5);
-        steps_size = STEP2;
+        selected = 2;
         set_event(EVENT_15);
     } else if (tst_event(EVENT_BTN6)) {
         clr_event(EVENT_BTN6);
-        steps_size = STEP1;
+        selected = 3;
         set_event(EVENT_15);
     }
 }
 
 // ----------------------------------------------------------------------------
-GLOBAL Int value = 0;
-Int tmp = 0;
-Int to_check = 0;
-UInt i = 4;
-UInt digit = 0;
-
 // der Number-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Number_Handler(Void) {
-    // 1532 -> 1432
     if (tst_event(EVENT_15)) {
        clr_event(EVENT_15);
        if (TSTBIT(P2OUT, BIT7)) {
-           if (value LT steps_size) {
-               value += MAX_VALUE;
-           }
-           value -= steps_size;
+           digits[selected] -= 1;
        } else {
-           value += steps_size;
-           if (value GT MAX_VALUE) {
-               value -= MAX_VALUE;
-           }
+           digits[selected] += 1;
        }
-       tmp = value;
        set_event(EVENT_DIGI);
    }
 }
 
 // ----------------------------------------------------------------------------
-// Datentyp eines konstanten Funktionspointers
-typedef Void (* VoidFunc)(Void);
-
-// Funktionsprototypen
-LOCAL Void State0(Void);
-LOCAL Void State1(Void);
-LOCAL Void State2(Void);
-
-// lokale Zustandsvariable
-LOCAL VoidFunc state = State0;
-
-LOCAL Void State0(Void) {
-    if (tst_event(EVENT_DIGI)) {
-        i = 4;
-        state = State1;
-    }
-}
-
-LOCAL Void State1(Void) {
-    if (i > 0) {
-        digit = 0;
-        to_check = steps[i];
-        if (tmp EQ to_check) {
-            digit = 1;
-            tmp -= to_check;
-        }
-        state = State2;
-    } else {
-        clr_event(EVENT_DIGI);
-        tmp = value;
-        to_check = 0;
-        i = 4;
-        digit = 0;
-        if (tmp GE MAX_VALUE) {
-            tmp -= MAX_VALUE;
-        }
-        state = State0;
-    }
-}
-
-LOCAL Void State2(Void) {
-    if (tmp GE to_check) {
-        tmp -= to_check;
-        digit++;
-    } else {
-        AS1108_Write(i, digit);
-        i--;
-        state = State1;
-    }
-}
+//// Datentyp eines konstanten Funktionspointers
+//typedef Void (* VoidFunc)(Void);
+//
+//// Funktionsprototypen
+//LOCAL Void State0(Void);
+//LOCAL Void State1(Void);
+//LOCAL Void State2(Void);
+//
+//// lokale Zustandsvariable
+//LOCAL VoidFunc state = State0;
+//
+//LOCAL Void State0(Void) {
+//    if (tst_event(EVENT_DIGI)) {
+//        i = 1;
+//        state = State1;
+//    }
+//}
+//
+//LOCAL Void State1(Void) {
+//    if (i <= 4) {
+//        digit = 0;
+//        to_check = steps[i];
+//        if (tmp EQ to_check) {
+//            digit = 1;
+//            tmp -= to_check;
+//        }
+//    } else {
+//        clr_event(EVENT_DIGI);
+//        tmp = value;
+//        to_check = 0;
+//        i = 4;
+//        digit = 0;
+//        if (tmp GE MAX_VALUE) {
+//            tmp -= MAX_VALUE;
+//        }
+//        state = State0;
+//    }
+//}
 
 // der AS1108_Hander beinhaltet eine Zustandsmaschine
 GLOBAL Void AS1108_Handler(Void) {
-    // 1532 -> 1318
-    (*state)();
+    if (tst_event(EVENT_DIGI)) {
+        clr_event(EVENT_DIGI);
+        for (Int i = 1; i <= 4; i++) {
+            UChar index = i - 1;
+            if (digits[index] > 9) {
+                digits[index] = 0;
+                digits[i]++;
+            } else if (digits[index] < 0) {
+                digits[index] = 9;
+                digits[i]--;
+            }
+            AS1108_Write(i, digits[index]);
+        }
+   }
 }
