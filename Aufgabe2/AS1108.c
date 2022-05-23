@@ -67,6 +67,7 @@ GLOBAL Void SPI_Init(Void) {
 
 // der Treiberbaustein AS1108 ist hier �ber die SPI-Schnittstelle zu initialisieren
 GLOBAL Void AS1108_Init(Void) {
+    // 1532 -> 1480
     // Shutdown
     AS1108_Write(0x0C, 0x81);
     // Decode mode on Code-B for all digits
@@ -95,6 +96,7 @@ GLOBAL UInt steps_size = 0;
 
 // der Button-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Button_Handler(Void) {
+    // 1532 -> 1404
     if (tst_event(EVENT_BTN3)) {
         clr_event(EVENT_BTN3);
         steps_size = STEP4;
@@ -123,6 +125,7 @@ UInt digit = 0;
 
 // der Number-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Number_Handler(Void) {
+    // 1532 -> 1432
     if (tst_event(EVENT_15)) {
        clr_event(EVENT_15);
        if (TSTBIT(P2OUT, BIT7)) {
@@ -204,5 +207,6 @@ LOCAL Void State2(Void) {
 
 // der AS1108_Hander beinhaltet eine Zustandsmaschine
 GLOBAL Void AS1108_Handler(Void) {
+    // 1532 -> 1318
     (*state)();
 }

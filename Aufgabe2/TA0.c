@@ -120,6 +120,7 @@ GLOBAL Void TA0_Init(Void) {
 __interrupt Void TA0_ISR(Void) {
     //static volatile UChar test = 0;
     // Timer logic for 250ms step
+    // 1532 -> 1414
     if (--step_count EQ 0) {
         //test = *(*(P + pattern_index) + array_index);
         step_count = TIMER_COUNT;
