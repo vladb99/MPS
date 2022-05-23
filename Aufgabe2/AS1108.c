@@ -18,7 +18,7 @@
 // fifth element is a dont care
 Int digits[] = {0, 0, 0, 0, 0};
 static UInt selected;
-static Int i;
+static Char i;
 
 // es sind geeignete Datenstrukturen f�r den Datenaustausch
 // zwischen den Handlern festzulegen.
@@ -75,19 +75,6 @@ GLOBAL Void AS1108_Init(Void) {
     AS1108_Write(0x0A, 0x06);
     // Scan limit on display all digits
     AS1108_Write(0x0B, 0x03);
-
-    // Feature
-    // AS1108_Write(0x0E, 0b00000000);
-    // Display test on normal operation
-    // AS1108_Write(0x0F, 0);
-
-    // Init with 0
-    //AS1108_Write(0x01, 0);
-    //AS1108_Write(0x02, 0);
-    //AS1108_Write(0x03, 0);
-    //AS1108_Write(0x04, 0);
-
-    //AS1108_Write(4, 9);
 
     set_event(EVENT_DIGI);
 }
@@ -149,11 +136,11 @@ LOCAL Void State0(Void) {
 LOCAL Void State1(Void) {
     if (i <= 4) {
         UChar index = i - 1;
-        if (digits[index] > 9) {
+        if (digits[index] > BASE-1) {
             digits[index] = 0;
             digits[i]++;
         } else if (digits[index] < 0) {
-            digits[index] = 9;
+            digits[index] = BASE-1;
             digits[i]--;
         }
         AS1108_Write(i, digits[index]);
