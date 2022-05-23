@@ -18,6 +18,7 @@
 // fifth element is a dont care
 Int digits[] = {0, 0, 0, 0, 0};
 static UInt selected;
+static Int i;
 
 // es sind geeignete Datenstrukturen f�r den Datenaustausch
 // zwischen den Handlern festzulegen.
@@ -128,59 +129,42 @@ GLOBAL Void Number_Handler(Void) {
 }
 
 // ----------------------------------------------------------------------------
-//// Datentyp eines konstanten Funktionspointers
-//typedef Void (* VoidFunc)(Void);
-//
-//// Funktionsprototypen
-//LOCAL Void State0(Void);
-//LOCAL Void State1(Void);
-//LOCAL Void State2(Void);
-//
-//// lokale Zustandsvariable
-//LOCAL VoidFunc state = State0;
-//
-//LOCAL Void State0(Void) {
-//    if (tst_event(EVENT_DIGI)) {
-//        i = 1;
-//        state = State1;
-//    }
-//}
-//
-//LOCAL Void State1(Void) {
-//    if (i <= 4) {
-//        digit = 0;
-//        to_check = steps[i];
-//        if (tmp EQ to_check) {
-//            digit = 1;
-//            tmp -= to_check;
-//        }
-//    } else {
-//        clr_event(EVENT_DIGI);
-//        tmp = value;
-//        to_check = 0;
-//        i = 4;
-//        digit = 0;
-//        if (tmp GE MAX_VALUE) {
-//            tmp -= MAX_VALUE;
-//        }
-//        state = State0;
-//    }
-//}
+// Datentyp eines konstanten Funktionspointers
+typedef Void (* VoidFunc)(Void);
+
+// Funktionsprototypen
+LOCAL Void State0(Void);
+LOCAL Void State1(Void);
+
+// lokale Zustandsvariable
+LOCAL VoidFunc state = State0;
+
+LOCAL Void State0(Void) {
+    if (tst_event(EVENT_DIGI)) {
+        i = 1;
+        state = State1;
+    }
+}
+
+LOCAL Void State1(Void) {
+    if (i <= 4) {
+        UChar index = i - 1;
+        if (digits[index] > 9) {
+            digits[index] = 0;
+            digits[i]++;
+        } else if (digits[index] < 0) {
+            digits[index] = 9;
+            digits[i]--;
+        }
+        AS1108_Write(i, digits[index]);
+        i++;
+    } else {
+        clr_event(EVENT_DIGI);
+        state = State0;
+    }
+}
 
 // der AS1108_Hander beinhaltet eine Zustandsmaschine
 GLOBAL Void AS1108_Handler(Void) {
-    if (tst_event(EVENT_DIGI)) {
-        clr_event(EVENT_DIGI);
-        for (Int i = 1; i <= 4; i++) {
-            UChar index = i - 1;
-            if (digits[index] > 9) {
-                digits[index] = 0;
-                digits[i]++;
-            } else if (digits[index] < 0) {
-                digits[index] = 9;
-                digits[i]--;
-            }
-            AS1108_Write(i, digits[index]);
-        }
-   }
+    (*state)();
 }
