@@ -16,9 +16,9 @@
 #define BASE 10
 
 // fifth element is a dont care
-Int digits[] = {0, 0, 0, 0, 0};
-static UInt selected;
-static Char i;
+signed char digits[] = {0, 0, 0, 0, 0};
+UChar selected;
+UChar i;
 
 // es sind geeignete Datenstrukturen f�r den Datenaustausch
 // zwischen den Handlern festzulegen.
@@ -106,10 +106,9 @@ GLOBAL Void Button_Handler(Void) {
 GLOBAL Void Number_Handler(Void) {
     if (tst_event(EVENT_15)) {
        clr_event(EVENT_15);
+       digits[selected] += 1;
        if (TSTBIT(P2OUT, BIT7)) {
-           digits[selected] -= 1;
-       } else {
-           digits[selected] += 1;
+           digits[selected] -= 2;
        }
        set_event(EVENT_DIGI);
    }
