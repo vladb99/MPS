@@ -31,7 +31,7 @@ LOCAL Void AS1108_Write(UChar adr, UChar arg) {
    ch = UCA1RXBUF;        // dummy read
    UCA1TXBUF = arg;       // Datum ausgeben
    while (TSTBIT(UCA1IFG, UCRXIFG) EQ 0);
-   ch = UCA1RXBUF;        // dummy read
+   //ch = UCA1RXBUF;        // dummy read
    SETBIT(P2OUT,  BIT3);  // Select deaktivieren
 }
 
