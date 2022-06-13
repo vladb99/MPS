@@ -2,9 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-SHELL = cmd.exe
-
-CG_TOOL_ROOT := C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS
+CG_TOOL_ROOT := /Applications/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -22,8 +20,8 @@ $(GEN_CMDS__FLAG) \
 
 -include ../makefile.init
 
-RM := DEL /F
-RMDIR := RMDIR /S/Q
+RM := rm -rf
+RMDIR := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
@@ -145,14 +143,14 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 Aufgabe2.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: MSP430 Linker'
-	"C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/bin/cl430" -vmspx -O4 --opt_for_speed=0 --use_hw_mpy=F5 --advice:power=all --define=__MSP430FR5729__ --define=_MPU_ENABLE -g --c99 --float_operations_allowed=none --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 -z -m"Aufgabe2.map" --heap_size=160 --stack_size=32 --cinit_hold_wdt=on -i"C:/ti/ccs1110/ccs/ccs_base/msp430/include" -i"C:/ti/ccs1110/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"C:/ti/ccs1110/ccs/ccs_base/msp430/lib/FR57xx" -i"C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/lib" -i"C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include" --priority --reread_libs --define=_MPU_ENABLE --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Aufgabe2_linkInfo.xml" --use_hw_mpy=F5 --cinit_compression=off --copy_compression=off --rom_model --zero_init=off -o "Aufgabe2.out" $(ORDERED_OBJS)
+	"/Applications/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/bin/cl430" -vmspx -O4 --opt_for_speed=0 --use_hw_mpy=F5 --advice:power=all --define=__MSP430FR5729__ --define=_MPU_ENABLE -g --c99 --float_operations_allowed=none --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --silicon_errata=CPU21 --silicon_errata=CPU22 --silicon_errata=CPU40 -z -m"Aufgabe2.map" --heap_size=160 --stack_size=32 --cinit_hold_wdt=on -i"/Applications/ti/ccs1110/ccs/ccs_base/msp430/include" -i"/Applications/ti/ccs1110/ccs/ccs_base/msp430/lib/5xx_6xx_FRxx" -i"/Applications/ti/ccs1110/ccs/ccs_base/msp430/lib/FR57xx" -i"/Applications/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/lib" -i"/Applications/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include" --priority --reread_libs --define=_MPU_ENABLE --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Aufgabe2_linkInfo.xml" --use_hw_mpy=F5 --cinit_compression=off --copy_compression=off --rom_model --zero_init=off -o "Aufgabe2.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 Aufgabe2.hex: $(EXE_OUTPUTS)
 	@echo 'Building secondary target: "$@"'
 	@echo 'Invoking: MSP430 Hex Utility'
-	"C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/bin/hex430" --memwidth=8 --romwidth=8 --diag_wrap=off -o "Aufgabe2.hex" $(EXE_OUTPUTS__QUOTED)
+	"/Applications/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/bin/hex430" --memwidth=8 --romwidth=8 --diag_wrap=off -o "Aufgabe2.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building secondary target: "$@"'
 	@echo ' '
 

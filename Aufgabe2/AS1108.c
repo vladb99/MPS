@@ -31,7 +31,7 @@ LOCAL Void AS1108_Write(UChar adr, UChar arg) {
    ch = UCA1RXBUF;        // dummy read
    UCA1TXBUF = arg;       // Datum ausgeben
    while (TSTBIT(UCA1IFG, UCRXIFG) EQ 0);
-   //ch = UCA1RXBUF;        // dummy read
+   ch = UCA1RXBUF;        // dummy read
    SETBIT(P2OUT,  BIT3);  // Select deaktivieren
 }
 
@@ -121,6 +121,9 @@ typedef Void (* VoidFunc)(Void);
 // Funktionsprototypen
 LOCAL Void State0(Void);
 LOCAL Void State1(Void);
+LOCAL Void State2(Void);
+LOCAL Void State3(Void);
+
 
 // lokale Zustandsvariable
 LOCAL VoidFunc state = State0;
@@ -142,11 +145,35 @@ LOCAL Void State1(Void) {
             digits[index] = BASE-1;
             digits[i]--;
         }
-        AS1108_Write(i, digits[index]);
-        i++;
+
+        // TODO does ch need to be declared globally?
+        Char ch = UCA1RXBUF;   // dummy read, UCRXIFG := 0, UCOE := 0
+        CLRBIT(P2OUT,  BIT3);  // Select aktivieren
+        UCA1TXBUF = i;       // Adresse ausgeben
+
+        state = State2;
+        //AS1108_Write(i, digits[index]);
+        //i++;
     } else {
         clr_event(EVENT_DIGI);
         state = State0;
+    }
+}
+
+LOCAL Void State2(Void) {
+    if (NOT(TSTBIT(UCA1IFG, UCRXIFG) EQ 0)) {
+        Char ch = UCA1RXBUF;        // dummy read
+        UCA1TXBUF = digits[i-1];       // Datum ausgeben
+        state = State3;
+    }
+}
+
+LOCAL Void State3(Void) {
+    if (NOT(TSTBIT(UCA1IFG, UCRXIFG) EQ 0)) {
+        Char ch = UCA1RXBUF;        // dummy read
+        SETBIT(P2OUT,  BIT3);  // Select deaktivieren
+        i++;
+        state = State1;
     }
 }
 
