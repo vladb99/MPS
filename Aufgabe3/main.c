@@ -3,6 +3,7 @@
 #include "TA0.h"
 #include "event.h"
 #include "AS1108.h"
+#include "UCA0.h"
 
 /**
  * main.c
@@ -18,8 +19,9 @@ GLOBAL Void main(Void) {
 
    CS_Init();     // set up Clock System
    Port_Init();   // set up LED ports
-   SPI_Init();
+   SPI_Init();    // set up SPI
    TA0_Init();    // set up BTN Ports and Timer A0
+   UCA0_Init();   // set up UART
 
    AS1108_Init();
 
