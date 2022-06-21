@@ -155,6 +155,7 @@ LOCAL Void State1(Void) {
         //AS1108_Write(i, digits[index]);
         //i++;
     } else {
+        set_event(EVENT_SHOWTERM);
         clr_event(EVENT_DIGI);
         state = State0;
     }

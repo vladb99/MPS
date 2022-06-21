@@ -5,10 +5,10 @@
  *      Author: Admin
  */
 
-#include "../base.h"
+#include "..\base.h"
 
-// Ein Ereignis (Event) ist eine ï¿½nderung einer (physikalischen) Grï¿½ï¿½e,
-// die fï¿½r das System relevant ist und auf die das System reagieren sollte.
+// Ein Ereignis (Event) ist eine Änderung einer (physikalischen) Größe,
+// die für das System relevant ist und auf die das System reagieren sollte.
 
 #ifndef EVENT_H_
 #define EVENT_H_
@@ -35,15 +35,7 @@ typedef unsigned int TEvent;
 #define ALL_EVENTS  0xFFFF
 
 #define EVENT_IMA   EVENT_1  // I am alive
-#define EVENT_BTN1  EVENT_2  // click on button 1
-#define EVENT_BTN2  EVENT_3  // click on button 2
-#define EVENT_BTN3  EVENT_4  // click on button 3
-#define EVENT_BTN4  EVENT_5  // click on button 4
-#define EVENT_BTN5  EVENT_6  // click on button 5
-#define EVENT_BTN6  EVENT_7  // click on button 6
-#define EVENT_DIGI  EVENT_8  // update digital
-#define EVENT_7LED  EVENT_9  // update LEDs
-#define EVENT_SHOWTERM  EVENT_10  // show digits in terminal
+#define EVENT_RXD   EVENT_2  // received character
 
 EXTERN Void wait_for_event(Void);
 EXTERN Bool is_event_error(Void);

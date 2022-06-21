@@ -6,7 +6,7 @@
  */
 
 #include <msp430.h>
-#include "../base.h"
+#include "..\base.h"
 #include "uca0.h"
 #include "event.h"
 
@@ -28,12 +28,10 @@ GLOBAL Void UCA0_Init(Void) {
                                       // ... UART mode, Asynchronous mode
    SETBIT(UCA0CTLW0, UCBRKIE);        // receive break character interrupt enable
    SETBIT(UCA0CTLW0, UCSSEL__ACLK);   // select clock source: ACLK with 614.4 kHz
-
-   UCA0BRW = 2;                       // set clock prescaler for 14400 baud
-   UCA0MCTLW_L = 10<<4;               // first modulation stage
-   UCA0MCTLW_H = 0xB7;                // second modulation stage
+   UCA0BRW = 4;                       // set clock prescaler for 9600 baud
+   UCA0MCTLW_L = 0;                   // first modulation stage
+   UCA0MCTLW_H = 0x00;                // second modulation stage
    SETBIT(UCA0MCTLW, UCOS16);         // enable 16 times oversampling
-
    CLRBIT(P2SEL0, BIT1 + BIT0);       // set up Port 2: Pin0 => TXD, ...
    SETBIT(P2SEL1, BIT1 + BIT0);       // ... Pin1 <= RXD
    CLRBIT(P2REN,  BIT1 + BIT0);       // without pull up
@@ -49,16 +47,8 @@ __interrupt Void UCA0_ISR(Void) {
             Char ch = UCA0RXBUF; // dummy read
          } else {
             if (UCA0RXBUF EQ '?') {
-               set_event(EVENT_SHOWTERM);
+               set_event(EVENT_RXD);
                __low_power_mode_off_on_exit(); // restore Active Mode on return
-            }
-
-            // check if number between 0x30 and 0x39
-            // check if number and less than 5
-            // check if 5th element is \r
-
-            if (UCA0RXBUF EQ '0') {
-                set_event(EVENT_SHOWTERM);
             }
          }
          break;
@@ -75,6 +65,20 @@ __interrupt Void UCA0_ISR(Void) {
          break;
    }
 }
+
+#ifdef WITH_BUSY_WAITING
+GLOBAL Int UCA0_printf(const Char * str) {
+   if (str EQ NULL) {
+      return -1;
+   }
+   while (*str NE '\0') {
+      UCA0TXBUF = *str++;
+      // ohne while-Schleife funktioniert die Ausgabe nicht
+      while (TSTBIT(UCA0IFG, UCTXIFG) EQ 0) ;
+   }
+   return 0;
+}
+#endif
 
 #ifdef WITH_INTERRUPT
 GLOBAL Int UCA0_printf(const Char * str) {

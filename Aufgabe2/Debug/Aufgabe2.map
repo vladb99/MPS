@@ -1,7 +1,7 @@
 ******************************************************************************
-                  MSP430 Linker Unix v21.6.0                   
+                  MSP430 Linker PC v21.6.0                     
 ******************************************************************************
->> Linked Wed Jun  1 11:10:24 2022
+>> Linked Tue Jun 21 09:25:10 2022
 
 OUTPUT FILE NAME:   <Aufgabe2.out>
 ENTRY POINT SYMBOL: "_c_int00_noargs_mpu"  address: 0000c8a2
@@ -244,65 +244,65 @@ $fill002   0    0000ff88    00000008
 
 MODULE SUMMARY
 
-       Module                       code   ro data   rw data
-       ------                       ----   -------   -------
-    ./
-       main.obj                     544    0         0      
-       TA0.obj                      190    84        22     
-       AS1108.obj                   238    0         9      
-       event.obj                    0      0         4      
-    +--+----------------------------+------+---------+---------+
-       Total:                       972    84        35     
-                                                            
-    /var/tmp/
-       TI73WnDLMzh                  0      2         2      
-    +--+----------------------------+------+---------+---------+
-       Total:                       0      2         2      
-                                                            
-    /Applications/ti/ccs1110/ccs/ccs_base/msp430/lib/FR57xx/MPU_INIT_FR57XX_LIB_CCS_msp430_large_code_small_data.lib
-       mpu_init_fr57xx.obj          34     0         0      
-    +--+----------------------------+------+---------+---------+
-       Total:                       34     0         0      
-                                                            
-    /Applications/ti/ccs1110/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/lib/rts430x_lc_sd_eabi.lib
-       autoinit.c.obj               106    0         0      
-       cpy_util.asm.obj             64     0         0      
-       copy_decompress_none.c.obj   60     0         0      
-       boot.c.obj                   32     2         0      
-       isr_trap.asm.obj             8      0         0      
-       exit.c.obj                   6      0         0      
-       pre_init.c.obj               4      0         0      
-       int31.asm.obj                0      2         0      
-       int32.asm.obj                0      2         0      
-       int33.asm.obj                0      2         0      
-       int34.asm.obj                0      2         0      
-       int35.asm.obj                0      2         0      
-       int36.asm.obj                0      2         0      
-       int37.asm.obj                0      2         0      
-       int38.asm.obj                0      2         0      
-       int39.asm.obj                0      2         0      
-       int40.asm.obj                0      2         0      
-       int41.asm.obj                0      2         0      
-       int42.asm.obj                0      2         0      
-       int43.asm.obj                0      2         0      
-       int44.asm.obj                0      2         0      
-       int46.asm.obj                0      2         0      
-       int47.asm.obj                0      2         0      
-       int48.asm.obj                0      2         0      
-       int49.asm.obj                0      2         0      
-       int50.asm.obj                0      2         0      
-       int51.asm.obj                0      2         0      
-       int52.asm.obj                0      2         0      
-       int53.asm.obj                0      2         0      
-       int54.asm.obj                0      2         0      
-       startup.c.obj                2      0         0      
-    +--+----------------------------+------+---------+---------+
-       Total:                       282    48        0      
-                                                            
-       Stack:                       0      0         32     
-       Linker Generated:            0      32        0      
-    +--+----------------------------+------+---------+---------+
-       Grand Total:                 1288   166       69     
+       Module                                   code   ro data   rw data
+       ------                                   ----   -------   -------
+    .\
+       main.obj                                 544    0         0      
+       TA0.obj                                  190    84        22     
+       AS1108.obj                               238    0         9      
+       event.obj                                0      0         4      
+    +--+----------------------------------------+------+---------+---------+
+       Total:                                   972    84        35     
+                                                                        
+    C:\Users\vl161bra\AppData\Local\Temp\
+       {B042D25B-B8E4-4FAE-A417-F5201EB91BA1}   0      2         2      
+    +--+----------------------------------------+------+---------+---------+
+       Total:                                   0      2         2      
+                                                                        
+    C:\ti\ccs1110\ccs\ccs_base\msp430\lib\FR57xx\MPU_INIT_FR57XX_LIB_CCS_msp430_large_code_small_data.lib
+       mpu_init_fr57xx.obj                      34     0         0      
+    +--+----------------------------------------+------+---------+---------+
+       Total:                                   34     0         0      
+                                                                        
+    C:\ti\ccs1110\ccs\tools\compiler\ti-cgt-msp430_21.6.0.LTS\lib\rts430x_lc_sd_eabi.lib
+       autoinit.c.obj                           106    0         0      
+       cpy_util.asm.obj                         64     0         0      
+       copy_decompress_none.c.obj               60     0         0      
+       boot.c.obj                               32     2         0      
+       isr_trap.asm.obj                         8      0         0      
+       exit.c.obj                               6      0         0      
+       pre_init.c.obj                           4      0         0      
+       int31.asm.obj                            0      2         0      
+       int32.asm.obj                            0      2         0      
+       int33.asm.obj                            0      2         0      
+       int34.asm.obj                            0      2         0      
+       int35.asm.obj                            0      2         0      
+       int36.asm.obj                            0      2         0      
+       int37.asm.obj                            0      2         0      
+       int38.asm.obj                            0      2         0      
+       int39.asm.obj                            0      2         0      
+       int40.asm.obj                            0      2         0      
+       int41.asm.obj                            0      2         0      
+       int42.asm.obj                            0      2         0      
+       int43.asm.obj                            0      2         0      
+       int44.asm.obj                            0      2         0      
+       int46.asm.obj                            0      2         0      
+       int47.asm.obj                            0      2         0      
+       int48.asm.obj                            0      2         0      
+       int49.asm.obj                            0      2         0      
+       int50.asm.obj                            0      2         0      
+       int51.asm.obj                            0      2         0      
+       int52.asm.obj                            0      2         0      
+       int53.asm.obj                            0      2         0      
+       int54.asm.obj                            0      2         0      
+       startup.c.obj                            2      0         0      
+    +--+----------------------------------------+------+---------+---------+
+       Total:                                   282    48        0      
+                                                                        
+       Stack:                                   0      0         32     
+       Linker Generated:                        0      32        0      
+    +--+----------------------------------------+------+---------+---------+
+       Grand Total:                             1288   166       69     
 
 
 LINKER GENERATED COPY TABLES

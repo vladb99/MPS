@@ -16,4 +16,6 @@ EXTERN Void Button_Handler(Void);
 EXTERN Void Number_Handler(Void);
 EXTERN Void AS1108_Handler(Void);
 
+EXTERN signed char digits[5];
+
 #endif /* AS1108_H_ */

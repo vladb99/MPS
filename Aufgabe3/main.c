@@ -46,6 +46,13 @@ GLOBAL Void main(Void) {
       Number_Handler();
       AS1108_Handler();
 
+      if (tst_event(EVENT_SHOWTERM)) {
+          clr_event(EVENT_SHOWTERM);
+          // TODO optimize!
+          const Char hex_digits[6] = {0x30 + digits[3], 0x30 + digits[2], 0x30 + digits[1], 0x30 + digits[0], 0x0D, 0x0A};
+          UCA0_printf(hex_digits);
+      }
+
       // im Falle eines Event-Errors leuchtet die LED dauerhaft
       if (is_event_error()) {
          SETBIT(P1OUT, BIT2);
