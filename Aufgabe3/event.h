@@ -45,7 +45,6 @@ typedef unsigned int TEvent;
 #define EVENT_7LED  EVENT_9  // update LEDs
 #define EVENT_SHOWTERM  EVENT_10  // show digits in terminal
 #define EVENT_SETDIGITS  EVENT_11
-#define EVENT_ERROR EVENT_12
 
 EXTERN Void wait_for_event(Void);
 EXTERN Bool is_event_error(Void);

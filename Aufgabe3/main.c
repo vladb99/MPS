@@ -27,11 +27,6 @@ GLOBAL Void main(Void) {
    while(TRUE) {
       wait_for_event();
 
-      if (tst_event(EVENT_ERROR)) {
-          clr_event(EVENT_ERROR);
-          set_blink_muster(error_code);
-      }
-
       if (tst_event(EVENT_SETDIGITS)) {
           clr_event(EVENT_SETDIGITS);
 

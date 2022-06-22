@@ -74,7 +74,8 @@ __interrupt Void UCA0_ISR(Void) {
                 } else {
                     index = 0;
                     error_code = BY_RX;
-                    set_event(EVENT_SETDIGITS + EVENT_ERROR);
+                    set_blink_muster(error_code);
+                    set_event(EVENT_SETDIGITS);
                 }
             } else {
                 set_error_code(C_ERROR);
@@ -103,7 +104,7 @@ Void set_error_code(Char code) {
     if (error_code GT code) {
         error_code = code;
     }
-    set_event(EVENT_ERROR);
+    set_blink_muster(error_code);
 }
 
 #ifdef WITH_INTERRUPT
