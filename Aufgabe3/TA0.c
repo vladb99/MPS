@@ -25,7 +25,7 @@
 typedef struct {
     const UChar * const port;
     const UChar mask;
-    const TEvent msg;
+    const Char msg;
     UInt * const pcnt; // Hysterese Wert,
 } TButton;
 
