@@ -13,7 +13,6 @@ LOCAL Void CS_Init(Void);
 LOCAL Void Port_Init(Void);
 
 GLOBAL Void main(Void) {
-   Int cnt = 0;
    // stop watchdog timer
    WDTCTL = WDTPW + WDTHOLD;
 
@@ -28,13 +27,28 @@ GLOBAL Void main(Void) {
    while(TRUE) {
       wait_for_event();
 
-      if (tst_event(EVENT_BTN1)) {
-         clr_event(EVENT_BTN1);
-         if (++cnt GT MUSTER6) {
-            cnt = 0;
-         }
-         set_blink_muster(cnt);
+//      if (tst_event(EVENT_BTN1)) {
+//         clr_event(EVENT_BTN1);
+//         if (++cnt GT MUSTER6) {
+//            cnt = 0;
+//         }
+//         set_blink_muster(cnt);
+//      }
+      if (tst_event(EVENT_ERROR)) {
+          clr_event(EVENT_ERROR);
+          set_blink_muster(error_code);
       }
+
+      if (tst_event(EVENT_SETDIGITS)) {
+          clr_event(EVENT_SETDIGITS);
+
+          digits[0] = buffer[3] - 0x30;
+          digits[1] = buffer[2] - 0x30;
+          digits[2] = buffer[1] - 0x30;
+          digits[3] = buffer[0] - 0x30;
+          set_event(EVENT_DIGI);
+      }
+
       if (tst_event(EVENT_BTN2)) {
          clr_event(EVENT_BTN2);
          TGLBIT(P2OUT, BIT7);
@@ -49,7 +63,7 @@ GLOBAL Void main(Void) {
       if (tst_event(EVENT_SHOWTERM)) {
           clr_event(EVENT_SHOWTERM);
           // TODO optimize!
-          const Char hex_digits[6] = {0x30 + digits[3], 0x30 + digits[2], 0x30 + digits[1], 0x30 + digits[0], 0x0D, 0x0A};
+          const Char hex_digits[7] = {0x30 + digits[3], 0x30 + digits[2], 0x30 + digits[1], 0x30 + digits[0], 0x0D, 0x0A, 0x00};
           UCA0_printf(hex_digits);
       }
 

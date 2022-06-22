@@ -18,6 +18,10 @@ LOCAL const Char EndOfTExt = '\0';
 LOCAL const Char * ptr = &EndOfTExt;
 #endif
 
+char index = 0;
+signed char buffer[4];
+Char error_code = NO_ERROR;
+
 GLOBAL Void UCA0_Init(Void) {
 
    // set up Universal Serial Communication Interface A
@@ -46,21 +50,35 @@ __interrupt Void UCA0_ISR(Void) {
    switch (__even_in_range(UCA0IV, 0x04)) {
       case 0x02:  // Vector 2: Receive buffer full
          if (TSTBIT(UCA0STATW, UCBRK + UCRXERR)) {
+            // TODO brauchen wir den dummy read?
             Char ch = UCA0RXBUF; // dummy read
+            //set_error_code(BR_ERROR);
+         } else if (TSTBIT(UCA0STATW, UCFE + UCPE + UCOE)) {
+            set_error_code(FOP_ERROR);
          } else {
-            if (UCA0RXBUF EQ '?') {
-               set_event(EVENT_SHOWTERM);
-               __low_power_mode_off_on_exit(); // restore Active Mode on return
-            }
-
-            // check if number between 0x30 and 0x39
-            // check if number and less than 5
-            // check if 5th element is \r
-
-            if (UCA0RXBUF EQ '0') {
-                set_event(EVENT_SHOWTERM);
+            if (UCA0RXBUF GE ZERO AND UCA0RXBUF LE NINE) {
+                if (index EQ 4)
+                {
+                    set_error_code(BU_ERROR);
+                } else  {
+                    buffer[index] = UCA0RXBUF;
+                    index++;
+                    set_error_code(BY_RX);
+                }
+            } else if (UCA0RXBUF EQ ENTER) {
+                if (index NE 4) {
+                    set_error_code(BU_ERROR);
+                } else {
+                    error_code = BY_RX;
+                    set_event(EVENT_SETDIGITS);
+                    index = 0;
+                }
+            } else {
+                set_error_code(C_ERROR);
             }
          }
+         //CLRBIT(UCA0IE, UCRXIE);
+         __low_power_mode_off_on_exit(); // restore Active Mode on return
          break;
 #ifdef WITH_INTERRUPT
       case 0x04:  // Vector 4: Transmit buffer empty
@@ -74,6 +92,16 @@ __interrupt Void UCA0_ISR(Void) {
       default:
          break;
    }
+}
+
+Void set_error_code(Char code) {
+    if (code NE BY_RX) {
+        index = 0;
+    }
+    if (error_code GT code) {
+        error_code = code;
+    }
+    set_event(EVENT_ERROR);
 }
 
 #ifdef WITH_INTERRUPT

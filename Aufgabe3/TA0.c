@@ -46,12 +46,12 @@ LOCAL const TButton btn[BTNMAX] = {
 
 // 10ms Schritte
 LOCAL const UChar blink_musters[] = {
-        8, 2, 0,
-        3, 3, 0,
-        1, 1, 0,
-        2, 8, 0,
-        2, 2, 2, 8, 0,
-        2, 2, 2, 2, 2, 8, 0
+     1, 1, 0,
+     2, 2, 2, 2, 2, 8, 0,
+     2, 2, 2, 8, 0,
+     2, 8, 0,
+     8, 2, 0,
+     3, 3, 0
 };
 
 LOCAL const UChar * const map[] = {
