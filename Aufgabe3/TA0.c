@@ -14,7 +14,7 @@
 #define CNTMAX 4
 // 1/800Hz * 1000 = 1.25ms
 // 250ms / 1.25ms = 200
-#define BTNMAX 6
+#define BTNMAX 5
 #define TIMER_COUNT 200
 
 /*
@@ -36,12 +36,12 @@ LOCAL struct {
 } button;
 
 LOCAL const TButton btn[BTNMAX] = {
-    {(UChar *)(&P1IN), BIT0, EVENT_BTN1, &button.cnt[0]},
-    {(UChar *)(&P1IN), BIT1, EVENT_BTN2, &button.cnt[1]},
-    {(UChar *)(&P3IN), BIT0, EVENT_BTN3, &button.cnt[2]},
-    {(UChar *)(&P3IN), BIT1, EVENT_BTN4, &button.cnt[3]},
-    {(UChar *)(&P3IN), BIT2, EVENT_BTN5, &button.cnt[4]},
-    {(UChar *)(&P3IN), BIT3, EVENT_BTN6, &button.cnt[5]}
+    //{(UChar *)(&P1IN), BIT0, EVENT_BTN1, &button.cnt[0]},
+    {(UChar *)(&P1IN), BIT1, EVENT_BTN2, &button.cnt[0]},
+    {(UChar *)(&P3IN), BIT0, EVENT_BTN3, &button.cnt[1]},
+    {(UChar *)(&P3IN), BIT1, EVENT_BTN4, &button.cnt[2]},
+    {(UChar *)(&P3IN), BIT2, EVENT_BTN5, &button.cnt[3]},
+    {(UChar *)(&P3IN), BIT3, EVENT_BTN6, &button.cnt[4]}
 };
 
 // 10ms Schritte

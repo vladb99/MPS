@@ -20,6 +20,9 @@ signed char digits[] = {0, 0, 0, 0, 0};
 UChar selected;
 UChar i;
 
+TEvent button_events[4] = {EVENT_BTN3, EVENT_BTN4, EVENT_BTN5, EVENT_BTN6};
+Char button_index = 0;
+
 Char hex_digits[7] = {0, 0, 0, 0, 0x0D, 0x0A, 0x00};
 
 // es sind geeignete Datenstrukturen f�r den Datenaustausch
@@ -85,22 +88,15 @@ GLOBAL Void AS1108_Init(Void) {
 // ----------------------------------------------------------------------------
 // der Button-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Button_Handler(Void) {
-    if (tst_event(EVENT_BTN3)) {
-        clr_event(EVENT_BTN3);
-        selected = 0;
+    TEvent event = button_events[button_index];
+    if (tst_event(event)) {
+        clr_event(event);
+        selected = button_index;
         set_event(EVENT_15);
-    } else if (tst_event(EVENT_BTN4)) {
-        clr_event(EVENT_BTN4);
-        selected = 1;
-        set_event(EVENT_15);
-    } else if (tst_event(EVENT_BTN5)) {
-        clr_event(EVENT_BTN5);
-        selected = 2;
-        set_event(EVENT_15);
-    } else if (tst_event(EVENT_BTN6)) {
-        clr_event(EVENT_BTN6);
-        selected = 3;
-        set_event(EVENT_15);
+    }
+    button_index++;
+    if (button_index == 4) {
+        button_index = 0;
     }
 }
 
