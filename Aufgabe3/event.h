@@ -43,7 +43,7 @@ typedef unsigned int TEvent;
 #define EVENT_BTN6  EVENT_7  // click on button 6
 #define EVENT_DIGI  EVENT_8  // update digital
 #define EVENT_7LED  EVENT_9  // update LEDs
-#define EVENT_SHOWTERM  EVENT_10  // show digits in terminal
+//#define EVENT_SHOWTERM  EVENT_10  // show digits in terminal
 
 EXTERN Void wait_for_event(Void);
 EXTERN Bool is_event_error(Void);

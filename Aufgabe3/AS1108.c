@@ -10,6 +10,7 @@
 #include "../base.h"
 #include "event.h"
 #include "AS1108.h"
+#include "uca0.h"
 
 // Basis des Zahlensystems
 // Einstellung zwischen 2 und 10 soll m�glich sein
@@ -155,7 +156,10 @@ LOCAL Void State1(Void) {
         //AS1108_Write(i, digits[index]);
         //i++;
     } else {
-        set_event(EVENT_SHOWTERM);
+        //set_event(EVENT_SHOWTERM);
+        const Char hex_digits[7] = {0x30 + digits[3], 0x30 + digits[2], 0x30 + digits[1], 0x30 + digits[0], 0x0D, 0x0A, 0x00};
+        UCA0_printf(hex_digits);
+
         clr_event(EVENT_DIGI);
         state = State0;
     }
