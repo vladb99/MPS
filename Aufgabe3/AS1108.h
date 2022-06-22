@@ -4,8 +4,9 @@
  *  Created on: 26.12.2018
  *      Author: Admin
  */
-
+#pragma once
 #include "../base.h"
+#include "UCA0.h"
 
 #ifndef AS1108_H_
 #define AS1108_H_

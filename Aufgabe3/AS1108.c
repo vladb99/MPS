@@ -10,7 +10,6 @@
 #include "../base.h"
 #include "event.h"
 #include "AS1108.h"
-#include "uca0.h"
 
 // Basis des Zahlensystems
 // Einstellung zwischen 2 und 10 soll m�glich sein
@@ -20,6 +19,8 @@
 signed char digits[] = {0, 0, 0, 0, 0};
 UChar selected;
 UChar i;
+
+Char hex_digits[7] = {0, 0, 0, 0, 0x0D, 0x0A, 0x00};
 
 // es sind geeignete Datenstrukturen f�r den Datenaustausch
 // zwischen den Handlern festzulegen.
@@ -77,6 +78,7 @@ GLOBAL Void AS1108_Init(Void) {
     // Scan limit on display all digits
     AS1108_Write(0x0B, 0x03);
 
+    //hex_digits = {0x30 + digits[3], 0x30 + digits[2], 0x30 + digits[1], 0x30 + digits[0], 0x0D, 0x0A, 0x00};
     set_event(EVENT_DIGI);
 }
 
@@ -147,17 +149,18 @@ LOCAL Void State1(Void) {
             digits[i]--;
         }
 
-        // TODO does ch need to be declared globally?
+        //hex_digits[3 - i] = 0x30 + digits[i];
+
         Char ch = UCA1RXBUF;   // dummy read, UCRXIFG := 0, UCOE := 0
         CLRBIT(P2OUT,  BIT3);  // Select aktivieren
         UCA1TXBUF = i;       // Adresse ausgeben
 
         state = State2;
-        //AS1108_Write(i, digits[index]);
-        //i++;
     } else {
-        //set_event(EVENT_SHOWTERM);
-        const Char hex_digits[7] = {0x30 + digits[3], 0x30 + digits[2], 0x30 + digits[1], 0x30 + digits[0], 0x0D, 0x0A, 0x00};
+        hex_digits[0] = 0x30 + digits[3];
+        hex_digits[1] = 0x30 + digits[2];
+        hex_digits[2] = 0x30 + digits[1];
+        hex_digits[3] = 0x30 + digits[0];
         UCA0_printf(hex_digits);
 
         clr_event(EVENT_DIGI);
