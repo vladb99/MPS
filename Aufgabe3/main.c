@@ -27,16 +27,6 @@ GLOBAL Void main(Void) {
    while(TRUE) {
       wait_for_event();
 
-      if (tst_event(EVENT_SETDIGITS)) {
-          clr_event(EVENT_SETDIGITS);
-
-          digits[0] = buffer[3] - 0x30;
-          digits[1] = buffer[2] - 0x30;
-          digits[2] = buffer[1] - 0x30;
-          digits[3] = buffer[0] - 0x30;
-          set_event(EVENT_DIGI);
-      }
-
       if (tst_event(EVENT_BTN2)) {
          clr_event(EVENT_BTN2);
          TGLBIT(P2OUT, BIT7);

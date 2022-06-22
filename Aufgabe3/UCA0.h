@@ -7,6 +7,7 @@
 
 #include "../base.h"
 #include "TA0.h"
+#include "AS1108.h"
 
 #ifndef UCA0_H_
 #define UCA0_H_
