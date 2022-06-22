@@ -59,10 +59,9 @@ __interrupt Void UCA0_ISR(Void) {
          } else {
              ch = UCA0RXBUF;
             if (ch GE ZERO AND ch LE NINE) {
-                if (index EQ 4)
-                {
+                if (index EQ 4) {
                     set_error_code(BU_ERROR);
-                } else  {
+                } else {
                     buffer[index] = ch;
                     index++;
                     set_error_code(BY_RX);

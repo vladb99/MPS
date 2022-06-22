@@ -20,7 +20,7 @@ signed char digits[] = {0, 0, 0, 0, 0};
 UChar selected;
 UChar i;
 
-TEvent button_events[4] = {EVENT_BTN3, EVENT_BTN4, EVENT_BTN5, EVENT_BTN6};
+Char button_events[4] = {EVENT_BTN3, EVENT_BTN4, EVENT_BTN5, EVENT_BTN6};
 Char button_index = 0;
 
 Char hex_digits[7] = {0, 0, 0, 0, 0x0D, 0x0A, 0x00};
@@ -88,7 +88,7 @@ GLOBAL Void AS1108_Init(Void) {
 // ----------------------------------------------------------------------------
 // der Button-Handler beinhaltet keine Zustandsmaschiene
 GLOBAL Void Button_Handler(Void) {
-    TEvent event = button_events[button_index];
+    Char event = button_events[button_index];
     if (tst_event(event)) {
         clr_event(event);
         selected = button_index;
