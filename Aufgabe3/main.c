@@ -27,13 +27,6 @@ GLOBAL Void main(Void) {
    while(TRUE) {
       wait_for_event();
 
-//      if (tst_event(EVENT_BTN1)) {
-//         clr_event(EVENT_BTN1);
-//         if (++cnt GT MUSTER6) {
-//            cnt = 0;
-//         }
-//         set_blink_muster(cnt);
-//      }
       if (tst_event(EVENT_ERROR)) {
           clr_event(EVENT_ERROR);
           set_blink_muster(error_code);

@@ -18,7 +18,7 @@
 #define C_ERROR 2
 #define BU_ERROR 3
 #define BY_RX 4
-#define NO_ERROR 5
+#define NO_ERROR 4
 
 EXTERN Void UCA0_Init(Void);
 EXTERN Int UCA0_printf(const Char * str);

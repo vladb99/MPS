@@ -50,17 +50,16 @@ LOCAL const UChar blink_musters[] = {
      2, 2, 2, 2, 2, 8, 0,
      2, 2, 2, 8, 0,
      2, 8, 0,
-     8, 2, 0,
-     3, 3, 0
+     8, 2, 0
+     //3, 3, 0
 };
 
 LOCAL const UChar * const map[] = {
     &blink_musters[0],
     &blink_musters[3],
-    &blink_musters[6],
-    &blink_musters[9],
-    &blink_musters[12],
-    &blink_musters[17]
+    &blink_musters[10],
+    &blink_musters[15],
+    &blink_musters[18]
 };
 
 static UChar step_count;
@@ -69,15 +68,8 @@ static UChar cnt_led;
 static UChar pattern_index;
 static UChar current_pattern_value;
 static UChar pattern_index_new;
-//static const struct Button btn1 = {P1IN, BIT1, EVENT_BTN1};
 
 GLOBAL Void set_blink_muster(UInt arg) {
-/*
- * Die Funktion muss so erweitert werden,
- * dass ein Blinkmuster selektiert wird.
- * Diese L�sung h�ngt stark von der gew�hlten
- * Datenstruktur ab.
- */
     pattern_index_new = arg;
 }
 
@@ -93,9 +85,9 @@ GLOBAL Void TA0_Init(Void) {
     step_count = TIMER_COUNT;
     array_index = 0;
     cnt_led = 0;
-    pattern_index = 0;
+    pattern_index = 4;
     current_pattern_value = 0;
-    pattern_index_new = 0;
+    pattern_index_new = 4;
 
     //int *cheat_x = btn1->portid;
     //*cheat_x = P1IN;

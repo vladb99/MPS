@@ -47,37 +47,39 @@ GLOBAL Void UCA0_Init(Void) {
 
 #pragma vector = USCI_A0_VECTOR
 __interrupt Void UCA0_ISR(Void) {
+    register ch;
    switch (__even_in_range(UCA0IV, 0x04)) {
       case 0x02:  // Vector 2: Receive buffer full
          if (TSTBIT(UCA0STATW, UCBRK + UCRXERR)) {
             // TODO brauchen wir den dummy read?
-            Char ch = UCA0RXBUF; // dummy read
-            //set_error_code(BR_ERROR);
+            ch = UCA0RXBUF; // dummy read
+            set_error_code(BR_ERROR);
          } else if (TSTBIT(UCA0STATW, UCFE + UCPE + UCOE)) {
-            set_error_code(FOP_ERROR);
+             ch = UCA0RXBUF; // dummy read
+             set_error_code(FOP_ERROR);
          } else {
-            if (UCA0RXBUF GE ZERO AND UCA0RXBUF LE NINE) {
+             ch = UCA0RXBUF;
+            if (ch GE ZERO AND ch LE NINE) {
                 if (index EQ 4)
                 {
                     set_error_code(BU_ERROR);
                 } else  {
-                    buffer[index] = UCA0RXBUF;
+                    buffer[index] = ch;
                     index++;
                     set_error_code(BY_RX);
                 }
-            } else if (UCA0RXBUF EQ ENTER) {
+            } else if (ch EQ ENTER) {
                 if (index NE 4) {
                     set_error_code(BU_ERROR);
                 } else {
-                    error_code = BY_RX;
-                    set_event(EVENT_SETDIGITS);
                     index = 0;
+                    error_code = BY_RX;
+                    set_event(EVENT_SETDIGITS + EVENT_ERROR);
                 }
             } else {
                 set_error_code(C_ERROR);
             }
          }
-         //CLRBIT(UCA0IE, UCRXIE);
          __low_power_mode_off_on_exit(); // restore Active Mode on return
          break;
 #ifdef WITH_INTERRUPT
