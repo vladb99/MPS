@@ -20,7 +20,6 @@ LOCAL const Char * ptr = &EndOfTExt;
 
 char index = 0;
 signed char buffer[4];
-Char error_code = NO_ERROR;
 Bool is_buffer_set = FALSE;
 
 GLOBAL Void UCA0_Init(Void) {
@@ -59,28 +58,23 @@ __interrupt Void UCA0_ISR(Void) {
              set_error_code(FOP_ERROR);
          } else {
              ch = UCA0RXBUF;
-            if (ch GE ZERO AND ch LE NINE) {
-                if (index EQ 4) {
-                    set_error_code(BU_ERROR);
-                } else {
-                    buffer[index] = ch;
-                    index++;
-                    set_error_code(BY_RX);
-                }
-            } else if (ch EQ ENTER) {
-                if (index NE 4) {
-                    set_error_code(BU_ERROR);
-                } else {
-                    index = 0;
-                    error_code = BY_RX;
-                    set_blink_muster(error_code);
-
-                    is_buffer_set = TRUE;
-                    set_event(EVENT_DIGI);
-                }
-            } else {
-                set_error_code(C_ERROR);
-            }
+             if ((ch NE ENTER) AND (NOT(between(0x30, ch, 0x39)))) {
+                 set_error_code(C_ERROR);
+             } else if ((between(0x30, ch, 0x39) AND index EQ 4) OR (ch EQ ENTER AND index NE 4)) {
+                 set_error_code(BU_ERROR);
+             } else {
+                 if (between(0x30, ch, 0x39)) {
+                     buffer[index] = ch;
+                     index++;
+                     set_blink_muster(BY_RX);
+                 } else if (ch EQ ENTER) {
+                     index = 0;
+                     //error_code = BY_RX;
+                     set_blink_muster(BY_RX);
+                     is_buffer_set = TRUE;
+                     set_event(EVENT_DIGI);
+                 }
+             }
          }
          __low_power_mode_off_on_exit(); // restore Active Mode on return
          break;
@@ -102,10 +96,7 @@ Void set_error_code(Char code) {
     if (code NE BY_RX) {
         index = 0;
     }
-    if (error_code GT code) {
-        error_code = code;
-    }
-    set_blink_muster(error_code);
+    set_blink_muster(code);
 }
 
 #ifdef WITH_INTERRUPT
