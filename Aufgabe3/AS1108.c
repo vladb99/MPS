@@ -145,7 +145,7 @@ LOCAL Void State1(Void) {
             digits[i]--;
         }
 
-        //hex_digits[3 - i] = 0x30 + digits[i];
+        hex_digits[3 - index] = 0x30 + digits[index];
 
         Char ch = UCA1RXBUF;   // dummy read, UCRXIFG := 0, UCOE := 0
         CLRBIT(P2OUT,  BIT3);  // Select aktivieren
@@ -153,10 +153,6 @@ LOCAL Void State1(Void) {
 
         state = State2;
     } else {
-        hex_digits[0] = 0x30 + digits[3];
-        hex_digits[1] = 0x30 + digits[2];
-        hex_digits[2] = 0x30 + digits[1];
-        hex_digits[3] = 0x30 + digits[0];
         UCA0_printf(hex_digits);
 
         clr_event(EVENT_DIGI);
