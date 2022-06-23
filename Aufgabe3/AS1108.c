@@ -145,6 +145,10 @@ LOCAL Void State1(Void) {
             digits[i]--;
         }
 
+        if (is_buffer_set EQ TRUE) {
+            digits[index] = buffer[3 - index] - 0x30;
+        }
+
         hex_digits[3 - index] = 0x30 + digits[index];
 
         Char ch = UCA1RXBUF;   // dummy read, UCRXIFG := 0, UCOE := 0
@@ -155,6 +159,7 @@ LOCAL Void State1(Void) {
     } else {
         UCA0_printf(hex_digits);
 
+        is_buffer_set = FALSE;
         clr_event(EVENT_DIGI);
         state = State0;
     }

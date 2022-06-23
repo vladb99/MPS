@@ -28,5 +28,6 @@ EXTERN Void set_error_code(Char code);
 
 EXTERN signed char buffer[4];
 EXTERN Char error_code;
+EXTERN Bool is_buffer_set;
 
 #endif /* UCA0_H_ */

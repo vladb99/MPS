@@ -21,6 +21,7 @@ LOCAL const Char * ptr = &EndOfTExt;
 char index = 0;
 signed char buffer[4];
 Char error_code = NO_ERROR;
+Bool is_buffer_set = FALSE;
 
 GLOBAL Void UCA0_Init(Void) {
 
@@ -74,10 +75,7 @@ __interrupt Void UCA0_ISR(Void) {
                     error_code = BY_RX;
                     set_blink_muster(error_code);
 
-                    digits[0] = buffer[3] - 0x30;
-                    digits[1] = buffer[2] - 0x30;
-                    digits[2] = buffer[1] - 0x30;
-                    digits[3] = buffer[0] - 0x30;
+                    is_buffer_set = TRUE;
                     set_event(EVENT_DIGI);
                 }
             } else {
