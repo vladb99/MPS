@@ -68,9 +68,7 @@ __interrupt Void UCA0_ISR(Void) {
                      index++;
                      set_blink_muster(BY_RX);
                  } else if (ch EQ ENTER) {
-                     index = 0;
-                     //error_code = BY_RX;
-                     set_blink_muster(BY_RX);
+                     set_error_code(BY_RX);
                      is_buffer_set = TRUE;
                      set_event(EVENT_DIGI);
                  }
@@ -93,9 +91,7 @@ __interrupt Void UCA0_ISR(Void) {
 }
 
 Void set_error_code(Char code) {
-    if (code NE BY_RX) {
-        index = 0;
-    }
+    index = 0;
     set_blink_muster(code);
 }
 
