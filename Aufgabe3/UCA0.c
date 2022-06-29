@@ -50,7 +50,7 @@ __interrupt Void UCA0_ISR(Void) {
     register ch;
    switch (__even_in_range(UCA0IV, 0x04)) {
       case 0x02:  // Vector 2: Receive buffer full
-         if (TSTBIT(UCA0STATW, UCBRK + UCRXERR)) {
+         if (TSTBIT(UCA0STATW, UCBRK)) {
             ch = UCA0RXBUF; // dummy read
             set_error_code(BR_ERROR);
          } else if (TSTBIT(UCA0STATW, UCFE + UCPE + UCOE)) {
